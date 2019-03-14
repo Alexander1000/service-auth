@@ -1,4 +1,5 @@
 Ручка /v1/create
+Описание: регистрация в сервисе авторизаций
 Входные данные:
 1) userId: integer
 2) pass: string
@@ -11,7 +12,8 @@
 Ответ: успех/не успех
 
 
-Ручка: /v1/auth
+Ручка: /v1/authenticate
+Описание: аутентификация, проверка пароля, выдача токена
 Входные данные:
 1) userId: integer
 2) credential: type + id
@@ -26,3 +28,30 @@
 token + refresh token
 ИЛИ Токен протух
 ИЛИ Фатал
+
+
+Ручка: /v1/authorize
+Описание: Проверка авторизации по токену
+Входные данные:
+token: string
+Действие:
+1) получаем токен из auth_tokens
+Ответ
+Пользователь авторизован (status_id = Active)
+Токен протух (stat_id = Expired)
+ИНАЧЕ пользователь не авторизован
+
+
+Ручка: /v1/refresh
+Описание: обновление токена
+Входные данные
+token + refresh
+Действие:
+1) получаем token из auth_tokens
+2) получаем refreshToken из auth_refresh_tokens
+3) валидируем принадлежность
+4) обновляем refresh -> update auth_refresh_tokens(status_id = Prolongated)
+5) создаем запись в auth_refresh_tokens(token_id, token = generate(), expire_at = now() + 1 month, status_id = new())
+6) обновляем запись -> auth_tokens(status_id = Active, expire_at = now() + 1month)
+Ответ:
+token + refresh token (new)
