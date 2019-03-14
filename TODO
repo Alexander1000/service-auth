@@ -55,3 +55,14 @@ token + refresh
 6) обновляем запись -> auth_tokens(status_id = Active, expire_at = now() + 1month)
 Ответ:
 token + refresh token (new)
+
+
+Ручка: /v1/logout
+Описание: выход
+Входные данные:
+token + refresh
+Действие:
+1) обновить запись auth_refresh_tokens(status_id = Disabled)
+2) Обновить запись auth_tokens(status_id = Disabled)
+Выход:
+Успех / не успех
