@@ -1,0 +1,10 @@
+Ручка /v1/create
+Входные данные:
+1) userId: integer
+2) pass: string
+3) credentials:
+    - type: string(login|email|phone)
+      id: integer
+Действие:
+1) Создаст запись в users_pass(user_id, pass, salt)
+2) Создаст записи в users_auth_credentials(user_id, cred_id, type_id)

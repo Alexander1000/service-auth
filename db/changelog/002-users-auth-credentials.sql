@@ -16,3 +16,5 @@ CREATE SEQUENCE users_auth_credentials_auth_id_seq
     CACHE 1;
 
 ALTER TABLE ONLY users_auth_credentials ALTER COLUMN auth_id SET DEFAULT nextval('users_auth_credentials_auth_id_seq'::regclass);
+
+create unique index users_auth_credentials_ux on users_auth_credentials (credential_id, type_id);
