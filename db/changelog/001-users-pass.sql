@@ -4,5 +4,6 @@ create table users_pass
   pass_hash character varying,
   pass_salt character varying,
   created_at timestamp with timezone,
-  updated_at timestamp with timezone
+  updated_at timestamp with timezone,
+  constraint users_pass_pkey primary key (user_id)
 );
