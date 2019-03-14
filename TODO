@@ -8,3 +8,21 @@
 Действие:
 1) Создаст запись в users_pass(user_id, pass, salt)
 2) Создаст записи в users_auth_credentials(user_id, cred_id, type_id)
+Ответ: успех/не успех
+
+
+Ручка: /v1/auth
+Входные данные:
+1) userId: integer
+2) credential: type + id
+3) pass: string
+Действие:
+1) получим auth_id из users_auth_credentials(user_id, cred_id, type_id)
+2) чекаем user_id в табличке users_auth_credentials
+3) чекаем пароль на основе записи в users_pass(user_id, pass, salt)
+4) создаем запись в auth_tokens(auth_id, token = generate(), expire_at = now() + 1 month, status_id = new)
+5) создаем запись в auth_refresh_tokens(token_id, token = generate(), expire_at = now() + 1 month, status_id = new())
+Ответ
+token + refresh token
+ИЛИ Токен протух
+ИЛИ Фатал
