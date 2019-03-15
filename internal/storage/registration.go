@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/blake2b"
+	"encoding/hex"
 )
 
 func (r *Repository) Registration(ctx context.Context, userID int64, pass string, credentials []model.Credential) error {
@@ -38,7 +39,7 @@ func (r *Repository) Registration(ctx context.Context, userID int64, pass string
 			insert into users_pass(user_id, pass_hash, pass_salt, created_at)
 			values (%d, %s, %s, now())`,
 			userID,
-			passHash,
+			hex.EncodeToString(passHash[0:]),
 			u.String(),
 		),
 	)
