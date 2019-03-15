@@ -6,6 +6,7 @@
   - add config
   - handle os signals
   - add makefile
+  - add storage package
 
 ## 2019-03-14
 ### Added
