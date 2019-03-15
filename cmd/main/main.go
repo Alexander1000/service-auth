@@ -5,8 +5,10 @@ import (
 	"flag"
 	"net/http"
 	"fmt"
+	"context"
 
 	"github.com/Alexander1000/service-auth/internal/config"
+	"github.com/Alexander1000/service-auth/internal/trap"
 )
 
 func main() {
@@ -30,6 +32,13 @@ func main() {
 			log.Fatalf("error in start application: %v", err)
 		}
 	}()
+
+	signalTrap := trap.NewTrap()
+	ctx := context.Background()
+
+	if err := signalTrap.WaitShutdown(ctx); err != nil {
+		log.Printf("error in caught signal: %v", err)
+	}
 
 	log.Println("application terminated")
 }
