@@ -9,9 +9,16 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/blake2b"
 )
 
 func (r *Repository) Registration(ctx context.Context, userID int64, pass string, credentials []model.Credential) error {
+	u := uuid.New()
+	uuidData, err := u.MarshalBinary()
+	if err != nil {
+		return err
+	}
+
 	conn, err := r.db.Conn(ctx)
 	if err != nil {
 		return err
@@ -23,7 +30,7 @@ func (r *Repository) Registration(ctx context.Context, userID int64, pass string
 		return err
 	}
 
-	u := uuid.New()
+	passHash := blake2b.Sum512(append([]byte(pass), uuidData...))
 
 	_, err = tx.ExecContext(
 		ctx,
@@ -31,6 +38,7 @@ func (r *Repository) Registration(ctx context.Context, userID int64, pass string
 			insert into users_pass(user_id, pass_hash, pass_salt, created_at)
 			values (%d, %s, %s, now())`,
 			userID,
+			passHash,
 			u.String(),
 		),
 	)

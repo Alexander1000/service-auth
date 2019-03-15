@@ -9,9 +9,31 @@
   revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
   version = "v1.1.1"
 
+[[projects]]
+  branch = "master"
+  digest = "1:d389c020471d11eb47040a0e34c177c4378710b4381a99f1e92c810fb6368989"
+  name = "golang.org/x/crypto"
+  packages = ["blake2b"]
+  pruneopts = "UT"
+  revision = "a1f597ede03a7bef967a422b5b3a5bd08805a01e"
+
+[[projects]]
+  branch = "master"
+  digest = "1:53df1464a35ecef619d5d29fc24427e34798c47c31f8a35ff709cb71b4009972"
+  name = "golang.org/x/sys"
+  packages = [
+    "cpu",
+    "unix",
+  ]
+  pruneopts = "UT"
+  revision = "fead79001313d15903fb4605b4a1b781532cd93e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/google/uuid"]
+  input-imports = [
+    "github.com/google/uuid",
+    "golang.org/x/crypto/blake2b",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
