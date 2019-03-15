@@ -5,6 +5,7 @@
   - add entrypoint
   - add config
   - handle os signals
+  - add makefile
 
 ## 2019-03-14
 ### Added
