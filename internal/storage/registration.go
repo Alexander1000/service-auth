@@ -7,6 +7,8 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func (r *Repository) Registration(ctx context.Context, userID int64, pass string, credentials []model.Credential) error {
@@ -21,12 +23,15 @@ func (r *Repository) Registration(ctx context.Context, userID int64, pass string
 		return err
 	}
 
+	u := uuid.New()
+
 	_, err = tx.ExecContext(
 		ctx,
 		fmt.Sprintf(`
 			insert into users_pass(user_id, pass_hash, pass_salt, created_at)
 			values (%d, %s, %s, now())`,
 			userID,
+			u.String(),
 		),
 	)
 	if err != nil {
