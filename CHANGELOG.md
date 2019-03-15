@@ -3,6 +3,7 @@
 ## 2019-03-15
 ### Added
   - add entrypoint
+  - add config
 
 ## 2019-03-14
 ### Added
