@@ -1,5 +1,9 @@
 # Changelog service-auth
 
+## 2019-03-16
+### Added
+  - add handler registration
+
 ## 2019-03-15
 ### Added
   - add entrypoint
