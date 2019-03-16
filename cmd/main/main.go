@@ -9,6 +9,9 @@ import (
 
 	"github.com/Alexander1000/service-auth/internal/config"
 	"github.com/Alexander1000/service-auth/internal/trap"
+	"github.com/Alexander1000/service-auth/internal/database"
+	"github.com/Alexander1000/service-auth/internal/storage"
+	"github.com/Alexander1000/service-auth/internal/api/v1/registration"
 )
 
 func main() {
@@ -26,6 +29,16 @@ func main() {
 	if cfg, err = config.LoadFromFile(*configPath); err != nil {
 		log.Fatalf("error in load config from file: %v", err)
 	}
+
+	db, err := database.Connect(cfg.Database)
+	if err != nil {
+		log.Fatalf("error in connect to database: %v", err)
+	}
+	defer db.Close()
+
+	strg := storage.New(db)
+
+	http.Handle("/v1/registration", registration.New(strg))
 
 	go func() {
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil); err != nil {
