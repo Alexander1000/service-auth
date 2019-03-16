@@ -37,7 +37,7 @@ func (r *Repository) Registration(ctx context.Context, userID int64, pass string
 		ctx,
 		fmt.Sprintf(`
 			insert into users_pass(user_id, pass_hash, pass_salt, created_at)
-			values (%d, %s, %s, now())`,
+			values (%d, '%s', '%s', now())`,
 			userID,
 			hex.EncodeToString(passHash[0:]),
 			u.String(),
