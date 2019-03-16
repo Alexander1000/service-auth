@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"github.com/Alexander1000/service-auth/internal/model"
+	"log"
 )
 
 type Handler struct {
@@ -45,6 +46,7 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	err := h.storage.Registration(req.Context(), reqData.UserID, reqData.Password, credentials)
 	if err != nil {
+		log.Printf("storage err: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	}

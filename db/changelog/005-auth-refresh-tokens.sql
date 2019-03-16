@@ -3,10 +3,10 @@ create table auth_refresh_tokens
   refresh_token_id bigint not null,
   token_id bigint not null,
   status_id integer not null,
-  created_at timestamp with timezone,
-  updated_at timestamp with timezone,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone,
   token character varying,
-  expire_at timestamp with timezone,
+  expire_at timestamp with time zone,
   constraint auth_refresh_tokens_pkey primary key (refresh_token_id)
 );
 
