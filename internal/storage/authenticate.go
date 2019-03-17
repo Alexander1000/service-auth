@@ -5,6 +5,10 @@ import (
 	"github.com/Alexander1000/service-auth/internal/model"
 	"fmt"
 	"database/sql"
+	"errors"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/blake2b"
+	"encoding/hex"
 )
 
 func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pass string) error {
@@ -38,6 +42,36 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 	if err != nil {
 		tx.Rollback()
 		return err
+	}
+
+	if !authID.Valid || authID.Int64 <= 0 {
+		tx.Rollback()
+		return errors.New("invalid auth_id")
+	}
+	if !passHash.Valid || len(passHash.String) == 0 {
+		tx.Rollback()
+		return errors.New("invalid pass_hash")
+	}
+	if !passSalt.Valid || len(passSalt.String) == 0 {
+		tx.Rollback()
+		return errors.New("invalid pass_salt")
+	}
+
+	u, err := uuid.Parse(passSalt.String)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	uuidData, err := u.MarshalBinary()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	hash := blake2b.Sum512(append([]byte(pass), uuidData...))
+	if passHash.String != hex.EncodeToString(hash[0:]) {
+		tx.Rollback()
+		return errors.New("authenticate error")
 	}
 
 	err = tx.Commit()
