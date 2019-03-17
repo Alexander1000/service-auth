@@ -74,6 +74,8 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 		return errors.New("authenticate error")
 	}
 
+	// todo: generate tokens and insert into auth_tokens, auth_refresh_tokens
+
 	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
