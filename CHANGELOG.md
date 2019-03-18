@@ -1,5 +1,9 @@
 # Changelog service-auth
 
+## 2019-03-18
+### Changed
+  - Сохранение токена
+
 ## 2019-03-17
 ### Added
   - наброски аутентификации в storage

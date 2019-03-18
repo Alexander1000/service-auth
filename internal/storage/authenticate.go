@@ -74,7 +74,32 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 		return errors.New("authenticate error")
 	}
 
-	// todo: generate tokens and insert into auth_tokens, auth_refresh_tokens
+	var tokenID sql.NullInt64
+
+	row = tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf(`
+			insert into auth_tokens(auth_id, token, status_id, created_at, expire_at)
+			values (%d, '%s', %d, now(), now() + interval '1 day')
+			returning token_id`,
+			authID.Int64,
+			uuid.New().String(), // todo refactoring random generate token
+			0, // todo put in constants
+		),
+	)
+
+	err = row.Scan(&tokenID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if !tokenID.Valid || tokenID.Int64 <= 0 {
+		tx.Rollback()
+		return errors.New("invalid token_id")
+	}
+
+	// todo: generate tokens and insert into auth_refresh_tokens
 
 	err = tx.Commit()
 	if err != nil {
