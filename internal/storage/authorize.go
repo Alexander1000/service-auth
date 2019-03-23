@@ -36,5 +36,15 @@ func (r *Repository) Authorize(ctx context.Context, token string) error {
 		return errors.New("invalid parse fields")
 	}
 
+	if statusID.Int64 == AccessTokenStatusDisabled {
+		return errors.New("token disabled")
+	} else if statusID.Int64 == AccessTokenStatusRefreshed {
+		return errors.New("token refreshed")
+	} else if statusID.Int64 != AccessTokenStatusActive {
+		return errors.New("internal error")
+	}
+
+	// active status
+
 	return nil
 }
