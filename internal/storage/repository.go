@@ -4,6 +4,12 @@ import (
 	"database/sql"
 )
 
+const (
+	AccessTokenStatusActive = 0
+	AccessTokenStatusRefreshed = 1
+	AccessTokenStatusDisabled = 2
+)
+
 type Repository struct {
 	db *sql.DB
 	credTypeMap map[string]int

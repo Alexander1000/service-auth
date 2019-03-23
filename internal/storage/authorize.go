@@ -22,7 +22,7 @@ func (r *Repository) Authorize(ctx context.Context, token string) error {
 		fmt.Sprintf(`
 			select status_id, expire_at
 			from auth_tokens
-			where status_id in (0, 1) and token = '%s'`,
+			where token = '%s'`,
 			token,
 		),
 	)
@@ -32,8 +32,8 @@ func (r *Repository) Authorize(ctx context.Context, token string) error {
 		return err
 	}
 
-	if !statusID.Valid {
-		return errors.New("invalid field status_id")
+	if !statusID.Valid || !expireAt.Valid {
+		return errors.New("invalid parse fields")
 	}
 
 	return nil
