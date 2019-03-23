@@ -12,6 +12,7 @@ import (
 	"github.com/Alexander1000/service-auth/internal/database"
 	"github.com/Alexander1000/service-auth/internal/storage"
 	"github.com/Alexander1000/service-auth/internal/api/v1/registration"
+	"github.com/Alexander1000/service-auth/internal/api/v1/authenticate"
 )
 
 func main() {
@@ -39,6 +40,8 @@ func main() {
 	strg := storage.New(db)
 
 	http.Handle("/v1/registration", registration.New(strg))
+
+	http.Handle("/v1/authenticate", authenticate.New(strg))
 
 	go func() {
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil); err != nil {
