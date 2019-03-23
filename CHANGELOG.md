@@ -1,5 +1,9 @@
 # Changelog service-auth
 
+## 2019-03-23
+### Changed
+  - Сохранение refresh_token
+
 ## 2019-03-18
 ### Changed
   - Сохранение токена
