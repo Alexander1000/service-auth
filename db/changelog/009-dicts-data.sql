@@ -7,12 +7,11 @@ values
 insert into auth_token_status(status_id, title)
 values
   (0, 'Active'),
-  (1, 'Expired'),
+  (1, 'Refreshed'),
   (2, 'Disabled');
 
 insert into auth_refresh_token_status(status_id, title)
 values
   (0, 'Active'),
-  (1, 'Expired'),
-  (2, 'Prolongated'),
-  (3, 'Disabled');
+  (1, 'Refreshed'),
+  (2, 'Disabled');
