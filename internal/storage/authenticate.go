@@ -83,7 +83,7 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 		ctx,
 		fmt.Sprintf(`
 			insert into auth_tokens(auth_id, token, status_id, created_at, expire_at)
-			values (%d, '%s', %d, now(), now() + interval '1 day')
+			values (%d, '%s', %d, now(), now() + interval '2 day')
 			returning token_id`,
 			authID.Int64,
 			authToken,
@@ -109,7 +109,7 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 		ctx,
 		fmt.Sprintf(`
 			insert into auth_refresh_tokens(token_id, status_id, created_at, token, expire_at)
-			values(%d, %d, now(), '%s', now() + interval '2 day')`,
+			values(%d, %d, now(), '%s', now() + interval '1 month')`,
 			tokenID.Int64,
 			0,
 			authRefreshToken,

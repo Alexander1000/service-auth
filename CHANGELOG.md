@@ -3,6 +3,7 @@
 ## 2019-03-23
 ### Changed
   - Сохранение refresh_token
+  - время жизни токенов: access: 48h, для refresh: 1 month
 
 ## 2019-03-18
 ### Changed
