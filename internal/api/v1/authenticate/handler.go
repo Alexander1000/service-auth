@@ -5,6 +5,7 @@ import (
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 	"io/ioutil"
 	"encoding/json"
+	"log"
 )
 
 type Handler struct {
@@ -30,6 +31,13 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	} else if err = json.Unmarshal(rawReqData, &reqData); err != nil {
+		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
+		return
+	}
+
+	err := h.storage.Authenticate(req.Context(), reqData.Credential, reqData.Password)
+	if err != nil {
+		log.Printf("storage err: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	}
