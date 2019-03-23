@@ -8,6 +8,13 @@ const (
 	AccessTokenStatusActive = 0
 	AccessTokenStatusRefreshed = 1
 	AccessTokenStatusDisabled = 2
+
+	AuthOk = 0
+	AuthExpired = 1
+	AuthNotFound = 2
+	AuthRefreshed = 3
+	AuthDisabled = 4
+	AuthInternalError = 5
 )
 
 type Repository struct {

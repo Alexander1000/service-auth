@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-func (r *Repository) Authorize(ctx context.Context, token string) error {
+func (r *Repository) Authorize(ctx context.Context, token string) (int, error) {
 	conn, err := r.db.Conn(ctx)
 	if err != nil {
-		return err
+		return AuthInternalError, err
 	}
 	defer conn.Close()
 
@@ -30,32 +30,35 @@ func (r *Repository) Authorize(ctx context.Context, token string) error {
 
 	err = row.Scan(&statusID, &expireAt)
 	if err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return AuthNotFound, nil
+		}
+		return AuthInternalError, err
 	}
 
 	if !statusID.Valid || !expireAt.Valid {
-		return errors.New("invalid parse fields")
+		return AuthInternalError, errors.New("invalid parse fields")
 	}
 
 	if statusID.Int64 == AccessTokenStatusDisabled {
-		return errors.New("token disabled")
+		return AuthDisabled, errors.New("token disabled")
 	} else if statusID.Int64 == AccessTokenStatusRefreshed {
-		return errors.New("token refreshed")
+		return AuthRefreshed, errors.New("token refreshed")
 	} else if statusID.Int64 != AccessTokenStatusActive {
-		return errors.New("internal error")
+		return AuthInternalError, errors.New("invalid status")
 	}
 
 	// active status
 	expireTime, err := time.Parse(time.RFC3339, expireAt.String)
 	if err != nil {
-		return err
+		return AuthInternalError, err
 	}
 
 	curTime := time.Now()
 
 	if curTime.Unix() > expireTime.Unix() {
-		return errors.New("token expired")
+		return AuthExpired, errors.New("token expired")
 	}
 
-	return nil
+	return AuthOk, nil
 }
