@@ -1,6 +1,6 @@
 package model
 
 type Credential struct {
-	Type string
-	ID int64
+	Type string `json:"type"`
+	ID int64 `json:"id"`
 }

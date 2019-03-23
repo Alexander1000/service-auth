@@ -5,6 +5,7 @@
   - Сохранение refresh_token
   - время жизни токенов: access: 48h, для refresh: 1 month
   - добавлен хендлер authenticate
+  - из хендлера отдается пара токенов (access + refresh)
 
 ## 2019-03-18
 ### Changed

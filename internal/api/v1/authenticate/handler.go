@@ -35,10 +35,12 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err := h.storage.Authenticate(req.Context(), reqData.Credential, reqData.Password)
+	token, err := h.storage.Authenticate(req.Context(), reqData.Credential, reqData.Password)
 	if err != nil {
 		log.Printf("storage err: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	}
+
+	jsonResponse.Reply(resp, response{Result: *token}, http.StatusOK)
 }

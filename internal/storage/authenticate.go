@@ -11,16 +11,16 @@ import (
 	"encoding/hex"
 )
 
-func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pass string) error {
+func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pass string) (*model.Token, error) {
 	conn, err := r.db.Conn(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer conn.Close()
 
 	tx, err := conn.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable, ReadOnly: false})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	row := tx.QueryRowContext(
@@ -41,37 +41,37 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 	err = row.Scan(&authID, &passHash, &passSalt)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	if !authID.Valid || authID.Int64 <= 0 {
 		tx.Rollback()
-		return errors.New("invalid auth_id")
+		return nil, errors.New("invalid auth_id")
 	}
 	if !passHash.Valid || len(passHash.String) == 0 {
 		tx.Rollback()
-		return errors.New("invalid pass_hash")
+		return nil, errors.New("invalid pass_hash")
 	}
 	if !passSalt.Valid || len(passSalt.String) == 0 {
 		tx.Rollback()
-		return errors.New("invalid pass_salt")
+		return nil, errors.New("invalid pass_salt")
 	}
 
 	u, err := uuid.Parse(passSalt.String)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 	uuidData, err := u.MarshalBinary()
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	hash := blake2b.Sum512(append([]byte(pass), uuidData...))
 	if passHash.String != hex.EncodeToString(hash[0:]) {
 		tx.Rollback()
-		return errors.New("authenticate error")
+		return nil, errors.New("authenticate error")
 	}
 
 	var tokenID sql.NullInt64
@@ -94,12 +94,12 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 	err = row.Scan(&tokenID)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	if !tokenID.Valid || tokenID.Int64 <= 0 {
 		tx.Rollback()
-		return errors.New("invalid token_id")
+		return nil, errors.New("invalid token_id")
 	}
 
 	// todo refactoring random generate token
@@ -118,14 +118,14 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &model.Token{AccessToken: authToken, RefreshToken: authRefreshToken}, nil
 }
