@@ -19,9 +19,4 @@ CREATE SEQUENCE auth_refresh_tokens_refresh_token_id_seq
 
 ALTER TABLE ONLY auth_refresh_tokens ALTER COLUMN refresh_token_id SET DEFAULT nextval('auth_refresh_tokens_refresh_token_id_seq'::regclass);
 
-create unique index auth_refresh_tokens_token_ux on auth_refresh_tokens (token) where status_id = 0;
-
-create index auth_refresh_tokens_token on auth_refresh_tokens using btree (token_id) where status_id = 0;
-
--- queue for move from active to expired
-create index auth_refresh_tokens_active on auth_refresh_tokens using btree (expire_at) where status_id = 0;
+create unique index auth_refresh_tokens_token_ux on auth_refresh_tokens (token);
