@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"database/sql"
 	"errors"
+	"time"
 )
 
 func (r *Repository) Authorize(ctx context.Context, token string) error {
@@ -45,6 +46,16 @@ func (r *Repository) Authorize(ctx context.Context, token string) error {
 	}
 
 	// active status
+	expireTime, err := time.Parse(time.RFC3339, expireAt.String)
+	if err != nil {
+		return err
+	}
+
+	curTime := time.Now()
+
+	if curTime.Unix() > expireTime.Unix() {
+		return errors.New("token expired")
+	}
 
 	return nil
 }
