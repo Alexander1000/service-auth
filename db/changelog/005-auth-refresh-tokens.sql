@@ -20,3 +20,5 @@ CREATE SEQUENCE auth_refresh_tokens_refresh_token_id_seq
 ALTER TABLE ONLY auth_refresh_tokens ALTER COLUMN refresh_token_id SET DEFAULT nextval('auth_refresh_tokens_refresh_token_id_seq'::regclass);
 
 create unique index auth_refresh_tokens_token_ux on auth_refresh_tokens (token);
+
+create unique index auth_refresh_tokens_token_id_ux on auth_refresh_tokens(token_id);
