@@ -19,7 +19,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
-	var refreshTokenID, tokenID, statusID sql.NullInt64
+	var refreshTokenID, tokenID, refreshStatusID sql.NullInt64
 	var refreshExpireAt sql.NullString
 
 	row := tx.QueryRowContext(
@@ -32,7 +32,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		),
 	)
 
-	err = row.Scan(&refreshTokenID, &tokenID, &statusID, &refreshExpireAt)
+	err = row.Scan(&refreshTokenID, &tokenID, &refreshStatusID, &refreshExpireAt)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -48,6 +48,45 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 			where refresh_token_id = %d`,
 			RefreshTokenStatusRefreshed,
 			refreshTokenID.Int64,
+		),
+	)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// todo check affected rows
+
+	var authID, statusID sql.NullInt64
+	var expireAt sql.NullString
+
+	row = tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf(`
+			select auth_id, status_id, expire_at
+			from auth_tokens
+			where token_id = %d`,
+			tokenID.Int64,
+		),
+	)
+
+	err = row.Scan(&authID, &statusID, &expireAt)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// todo check fields: status_id, expire_at
+
+	_, err = tx.ExecContext(
+		ctx,
+		fmt.Sprintf(`
+			update auth_tokens
+			set status_id = %d, updated_at = now()
+			where token_id = %d`,
+			AccessTokenStatusRefreshed,
+			tokenID.Int64,
 		),
 	)
 
