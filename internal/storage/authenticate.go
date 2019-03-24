@@ -87,7 +87,7 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 			returning token_id`,
 			authID.Int64,
 			authToken,
-			0, // todo put in constants
+			AccessTokenStatusActive,
 		),
 	)
 
@@ -111,7 +111,7 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 			insert into auth_refresh_tokens(token_id, status_id, created_at, token, expire_at)
 			values(%d, %d, now(), '%s', now() + interval '1 month')`,
 			tokenID.Int64,
-			0,
+			RefreshTokenStatusActive,
 			authRefreshToken,
 		),
 	)

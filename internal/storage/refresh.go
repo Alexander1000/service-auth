@@ -5,6 +5,8 @@ import (
 	"github.com/Alexander1000/service-auth/internal/model"
 	"database/sql"
 	"fmt"
+	"errors"
+	"github.com/google/uuid"
 )
 
 func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, error) {
@@ -96,6 +98,45 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 	}
 
 	// todo check affected rows
+
+	row = tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf(`
+			insert into auth_tokens(auth_id, token, status_id, created_at, expire_at)
+			values (%d, '%s', %d, now(), now() + interval '2 day')
+			returning token_id`,
+			authID.Int64,
+			uuid.New().String(),
+			AccessTokenStatusActive,
+		),
+	)
+
+	err = row.Scan(&tokenID)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if !tokenID.Valid || tokenID.Int64 <= 0 {
+		tx.Rollback()
+		return nil, errors.New("invalid token_id")
+	}
+
+	_, err = tx.ExecContext(
+		ctx,
+		fmt.Sprintf(`
+			insert into auth_refresh_tokens(token_id, status_id, created_at, token, expire_at)
+			values(%d, %d, now(), '%s', now() + interval '1 month')`,
+			tokenID.Int64,
+			RefreshTokenStatusActive,
+			uuid.New().String(),
+		),
+	)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 
 	err = tx.Commit()
 	if err != nil {
