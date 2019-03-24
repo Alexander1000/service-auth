@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"errors"
 	"github.com/google/uuid"
+	"time"
 )
 
 func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, error) {
@@ -38,6 +39,22 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 	if err != nil {
 		tx.Rollback()
 		return nil, err
+	}
+
+	if refreshStatusID.Int64 != RefreshTokenStatusActive {
+		tx.Rollback()
+		return nil, errors.New("not found")
+	}
+
+	tExpire, err := time.Parse(time.RFC3339, refreshExpireAt.String)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if tExpire.Unix() > time.Now().Unix() {
+		tx.Rollback()
+		return nil, errors.New("refresh token expired")
 	}
 
 	// todo check: expire, status
