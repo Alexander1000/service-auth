@@ -41,6 +41,11 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
+	if !refreshTokenID.Valid || !tokenID.Valid || !refreshStatusID.Valid || !refreshExpireAt.Valid {
+		tx.Rollback()
+		return nil, errors.New("invalid parse")
+	}
+
 	if refreshStatusID.Int64 != RefreshTokenStatusActive {
 		tx.Rollback()
 		return nil, errors.New("not found")
@@ -57,8 +62,6 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, errors.New("refresh token expired")
 	}
 
-	// todo check: expire, status
-
 	_, err = tx.ExecContext(
 		ctx,
 		fmt.Sprintf(`
@@ -74,8 +77,6 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		tx.Rollback()
 		return nil, err
 	}
-
-	// todo check affected rows
 
 	var authID, statusID sql.NullInt64
 	var expireAt sql.NullString
@@ -96,7 +97,15 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
-	// todo check fields: status_id, expire_at
+	if !authID.Valid || !statusID.Valid || !expireAt.Valid {
+		tx.Rollback()
+		return nil, errors.New("invalid fields")
+	}
+
+	if statusID.Int64 != AccessTokenStatusActive {
+		tx.Rollback()
+		return nil, errors.New("invalid status auth token")
+	}
 
 	_, err = tx.ExecContext(
 		ctx,
@@ -113,8 +122,6 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		tx.Rollback()
 		return nil, err
 	}
-
-	// todo check affected rows
 
 	row = tx.QueryRowContext(
 		ctx,
