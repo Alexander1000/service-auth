@@ -42,6 +42,10 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	switch res {
+	case storage.AuthRefreshed:
+		fallthrough
+	case storage.AuthDisabled:
+		fallthrough
 	case storage.AuthNotFound:
 		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
 		return
@@ -49,12 +53,6 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		respErr := jsonResponse.ErrorBadRequest
 		respErr.Error.Message = "Token expired"
 		jsonResponse.Reply(resp, respErr, http.StatusOK)
-		return
-	case storage.AuthRefreshed:
-		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
-		return
-	case storage.AuthDisabled:
-		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
 		return
 	}
 
