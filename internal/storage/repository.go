@@ -9,6 +9,10 @@ const (
 	AccessTokenStatusRefreshed = 1
 	AccessTokenStatusDisabled = 2
 
+	RefreshTokenStatusActive = 0
+	RefreshTokenStatusRefreshed = 1
+	RefreshTokenStatusDisabled = 2
+
 	AuthOk = 0
 	AuthExpired = 1
 	AuthNotFound = 2
