@@ -44,7 +44,7 @@ func main() {
 
 	http.Handle("/v1/authenticate", authenticate.New(strg))
 
-	http.Handle("/v1/authorize", authorize.New())
+	http.Handle("/v1/authorize", authorize.New(strg))
 
 	go func() {
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil); err != nil {

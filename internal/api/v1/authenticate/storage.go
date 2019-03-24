@@ -8,4 +8,3 @@ import (
 type storageRepository interface {
 	Authenticate(ctx context.Context, cred model.Credential, pass string) (*model.Token, error)
 }
-
