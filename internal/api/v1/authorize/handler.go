@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 	"log"
+	"github.com/Alexander1000/service-auth/internal/storage"
 )
 
 type Handler struct {
@@ -33,10 +34,27 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err := h.storage.Authorize(req.Context(), reqData.Token)
+	res, err := h.storage.Authorize(req.Context(), reqData.Token)
 	if err != nil {
 		log.Printf("storage err: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
+		return
+	}
+
+	switch res {
+	case storage.AuthNotFound:
+		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
+		return
+	case storage.AuthExpired:
+		respErr := jsonResponse.ErrorBadRequest
+		respErr.Error.Message = "Token expired"
+		jsonResponse.Reply(resp, respErr, http.StatusOK)
+		return
+	case storage.AuthRefreshed:
+		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
+		return
+	case storage.AuthDisabled:
+		jsonResponse.Reply(resp, jsonResponse.ErrorNotFound, http.StatusOK)
 		return
 	}
 
