@@ -41,9 +41,9 @@ func (r *Repository) Authorize(ctx context.Context, token string) (int, error) {
 	}
 
 	if statusID.Int64 == AccessTokenStatusDisabled {
-		return AuthDisabled, errors.New("token disabled")
+		return AuthDisabled, nil
 	} else if statusID.Int64 == AccessTokenStatusRefreshed {
-		return AuthRefreshed, errors.New("token refreshed")
+		return AuthRefreshed, nil
 	} else if statusID.Int64 != AccessTokenStatusActive {
 		return AuthInternalError, errors.New("invalid status")
 	}
@@ -57,7 +57,7 @@ func (r *Repository) Authorize(ctx context.Context, token string) (int, error) {
 	curTime := time.Now()
 
 	if curTime.Unix() > expireTime.Unix() {
-		return AuthExpired, errors.New("token expired")
+		return AuthExpired, nil
 	}
 
 	return AuthOk, nil
