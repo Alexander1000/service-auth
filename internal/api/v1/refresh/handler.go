@@ -32,9 +32,11 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err := h.storage.Refresh(req.Context(), reqData.Token)
+	token, err := h.storage.Refresh(req.Context(), reqData.Token)
 	if err != nil {
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	}
+
+	jsonResponse.Reply(resp, response{Result: token}, http.StatusOK)
 }
