@@ -5,6 +5,7 @@
   - Добавлен handler для refresh токенов
   - Обновлен TODO
   - storage logout
+  - add handler for logout
 
 ## 2019-03-24
 ### Added
