@@ -14,3 +14,10 @@ token
 token
 credential: id + type
 Выход: success/error
+
+Refacroting:
+1) Routings system
+2) tests
+3) json validator
+4) code formatting
+5) db refactoring (re-use code)
