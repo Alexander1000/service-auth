@@ -2,6 +2,7 @@ package authenticate
 
 import (
 	"context"
+
 	"github.com/Alexander1000/service-auth/internal/model"
 )
 

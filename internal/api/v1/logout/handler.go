@@ -2,9 +2,10 @@ package logout
 
 import (
 	"encoding/json"
-	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 	"io/ioutil"
 	"net/http"
+
+	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 )
 
 type Handler struct {

@@ -2,11 +2,12 @@ package registration
 
 import (
 	"encoding/json"
-	"github.com/Alexander1000/service-auth/internal/model"
-	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/Alexander1000/service-auth/internal/model"
+	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 )
 
 type Handler struct {
