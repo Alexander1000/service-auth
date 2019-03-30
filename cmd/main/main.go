@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Alexander1000/service-auth/internal/api/v1/refresh"
 	"log"
 	"flag"
 	"net/http"
@@ -45,6 +46,8 @@ func main() {
 	http.Handle("/v1/authenticate", authenticate.New(strg))
 
 	http.Handle("/v1/authorize", authorize.New(strg))
+
+	http.Handle("/v1/refresh", refresh.New())
 
 	go func() {
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil); err != nil {
