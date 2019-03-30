@@ -67,6 +67,25 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 		}
 	}
 
+	if dbRefreshTokenID.Valid {
+		if dbRefreshTokenStatus.Int64 == RefreshTokenStatusActive {
+			_, err = tx.ExecContext(
+				ctx,
+				fmt.Sprintf(`
+					update auth_refresh_tokens
+					set status_id = %d, updated_at = now()
+					where refresh_token_id = %d`,
+					RefreshTokenStatusDisabled,
+					dbRefreshTokenID.Int64,
+				),
+			)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
