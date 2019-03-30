@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
@@ -42,12 +41,15 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 
 	if err != nil {
 		tx.Rollback()
+		if err == sql.ErrNoRows {
+			return ErrorAuthTokenNotFound
+		}
 		return err
 	}
 
 	if !dbTokenID.Valid {
 		tx.Rollback()
-		return errors.New("not found")
+		return ErrorAuthTokenNotFound
 	}
 
 	if dbTokenStatus.Int64 == AccessTokenStatusActive {
@@ -65,6 +67,9 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 			tx.Rollback()
 			return err
 		}
+	} else {
+		tx.Rollback()
+		return ErrorAuthTokenNotFound
 	}
 
 	if dbRefreshTokenID.Valid {
