@@ -1,68 +1,16 @@
-Ручка /v1/registration
-Описание: регистрация в сервисе авторизаций
-Входные данные:
-1) userId: integer
-2) pass: string
-3) credentials:
-    - type: string(login|email|phone)
-      id: integer
-Действие:
-1) Создаст запись в users_pass(user_id, pass, salt)
-2) Создаст записи в users_auth_credentials(user_id, cred_id, type_id)
-Ответ: успех/не успех
-
-
-Ручка: /v1/authenticate
-Описание: аутентификация, проверка пароля, выдача токена
-Входные данные:
-1) userId: integer
-2) credential: type + id
-3) pass: string
-Действие:
-1) получим auth_id из users_auth_credentials(user_id, cred_id, type_id)
-2) чекаем user_id в табличке users_auth_credentials
-3) чекаем пароль на основе записи в users_pass(user_id, pass, salt)
-4) создаем запись в auth_tokens(auth_id, token = generate(), expire_at = now() + 1 month, status_id = new)
-5) создаем запись в auth_refresh_tokens(token_id, token = generate(), expire_at = now() + 1 month, status_id = new())
-Ответ
-token + refresh token
-ИЛИ Токен протух
-ИЛИ Фатал
-
-
-Ручка: /v1/authorize
-Описание: Проверка авторизации по токену
-Входные данные:
-token: string
-Действие:
-1) получаем токен из auth_tokens
-Ответ
-Пользователь авторизован (status_id = Active)
-Токен протух (stat_id = Expired)
-ИНАЧЕ пользователь не авторизован
-
-
-Ручка: /v1/refresh
-Описание: обновление токена
-Входные данные
-token + refresh
-Действие:
-1) получаем token из auth_tokens
-2) получаем refreshToken из auth_refresh_tokens
-3) валидируем принадлежность
-4) обновляем refresh -> update auth_refresh_tokens(status_id = Prolongated)
-5) создаем запись в auth_refresh_tokens(token_id, token = generate(), expire_at = now() + 1 month, status_id = new())
-6) обновляем запись -> auth_tokens(status_id = Active, expire_at = now() + 1month)
-Ответ:
-token + refresh token (new)
-
-
 Ручка: /v1/logout
 Описание: выход
 Входные данные:
-token + refresh
+token
 Действие:
 1) обновить запись auth_refresh_tokens(status_id = Disabled)
 2) Обновить запись auth_tokens(status_id = Disabled)
 Выход:
 Успех / не успех
+
+Ручка: /v1/bind
+Описание: привязать к пользователю дополнительные способы авторизации
+Входные данные:
+token
+credential: id + type
+Выход: success/error
