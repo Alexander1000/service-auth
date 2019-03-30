@@ -123,6 +123,8 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
+	aToken := uuid.New().String()
+
 	row = tx.QueryRowContext(
 		ctx,
 		fmt.Sprintf(`
@@ -130,7 +132,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 			values (%d, '%s', %d, now(), now() + interval '2 day')
 			returning token_id`,
 			authID.Int64,
-			uuid.New().String(),
+			aToken,
 			AccessTokenStatusActive,
 		),
 	)
@@ -146,6 +148,8 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, errors.New("invalid token_id")
 	}
 
+	rToken := uuid.New().String()
+
 	_, err = tx.ExecContext(
 		ctx,
 		fmt.Sprintf(`
@@ -153,7 +157,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 			values(%d, %d, now(), '%s', now() + interval '1 month')`,
 			tokenID.Int64,
 			RefreshTokenStatusActive,
-			uuid.New().String(),
+			rToken,
 		),
 	)
 
@@ -168,5 +172,8 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
-	return nil, nil
+	return &model.Token{
+		AccessToken: aToken,
+		RefreshToken: rToken,
+	}, nil
 }
