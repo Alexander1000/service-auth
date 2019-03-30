@@ -4,6 +4,7 @@
 ### Added
   - Добавлен handler для refresh токенов
   - Обновлен TODO
+  - storage logout
 
 ## 2019-03-24
 ### Added
