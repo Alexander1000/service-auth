@@ -57,7 +57,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 		return nil, err
 	}
 
-	if tExpire.Unix() > time.Now().Unix() {
+	if tExpire.Unix() < time.Now().Unix() {
 		tx.Rollback()
 		return nil, errors.New("refresh token expired")
 	}
