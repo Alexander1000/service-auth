@@ -3,6 +3,7 @@ package refresh
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 )
@@ -34,6 +35,7 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	token, err := h.storage.Refresh(req.Context(), reqData.Token)
 	if err != nil {
+		log.Printf("err in storage: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
 	}
