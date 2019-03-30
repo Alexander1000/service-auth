@@ -20,7 +20,6 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 
 	var dbTokenID, dbRefreshTokenID sql.NullInt64
 	var dbTokenStatus, dbRefreshTokenStatus sql.NullInt64
-	var dbTokenExpire, dbRefreshTokenExpire sql.NullString
 
 	err = tx.QueryRowContext(
 		ctx,
@@ -28,16 +27,14 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 			select
 				at.token_id,
 				at.status_id,
-				at.expire_at,
 				art.refresh_token_id,
-				art.status_id,
-				art.expire_at
+				art.status_id
 			from auth_tokens at
 			left join auth_refresh_tokens art on art.token_id = at.token_id
 			where at.token = '%s'`,
 			token,
 		),
-	).Scan(&dbTokenID, &dbTokenStatus, &dbTokenExpire, &dbRefreshTokenID, &dbRefreshTokenStatus, &dbRefreshTokenExpire)
+	).Scan(&dbTokenID, &dbTokenStatus, &dbRefreshTokenID, &dbRefreshTokenStatus)
 
 	if err != nil {
 		tx.Rollback()
