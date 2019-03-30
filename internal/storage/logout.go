@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -19,6 +20,8 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 	}
 
 	var dbTokenID, dbRefreshTokenID sql.NullInt64
+	var dbTokenStatus, dbRefreshTokenStatus sql.NullInt64
+	var dbTokenExpire, dbRefreshTokenExpire sql.NullString
 
 	err = tx.QueryRowContext(
 		ctx,
@@ -35,8 +38,36 @@ func (r *Repository) Logout(ctx context.Context, token string) error {
 			where at.token = '%s'`,
 			token,
 		),
-	).Scan(&dbTokenID, &dbRefreshTokenID)
+	).Scan(&dbTokenID, &dbTokenStatus, &dbTokenExpire, &dbRefreshTokenID, &dbRefreshTokenStatus, &dbRefreshTokenExpire)
 
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if !dbTokenID.Valid {
+		tx.Rollback()
+		return errors.New("not found")
+	}
+
+	if dbTokenStatus.Int64 == AccessTokenStatusActive {
+		_, err = tx.ExecContext(
+			ctx,
+			fmt.Sprintf(`
+				update auth_tokens
+				set status_id = %d, updated_at = now()
+				where token_id = %d`,
+				AccessTokenStatusDisabled,
+				dbTokenID.Int64,
+			),
+		)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
 		return err
