@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
-	"github.com/Alexander1000/service-auth/internal/model"
 	"database/sql"
-	"fmt"
 	"errors"
+	"fmt"
+	"github.com/Alexander1000/service-auth/internal/model"
 	"github.com/google/uuid"
 	"time"
 )
@@ -173,7 +173,7 @@ func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, e
 	}
 
 	return &model.Token{
-		AccessToken: aToken,
+		AccessToken:  aToken,
 		RefreshToken: rToken,
 	}, nil
 }

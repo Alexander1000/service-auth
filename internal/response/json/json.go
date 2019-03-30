@@ -1,8 +1,8 @@
 package json
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
 func Reply(w http.ResponseWriter, data interface{}, code int) (int, error) {

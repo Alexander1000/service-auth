@@ -1,21 +1,21 @@
 package main
 
 import (
-	"github.com/Alexander1000/service-auth/internal/api/v1/logout"
-	"github.com/Alexander1000/service-auth/internal/api/v1/refresh"
-	"log"
-	"flag"
-	"net/http"
-	"fmt"
 	"context"
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/Alexander1000/service-auth/internal/config"
-	"github.com/Alexander1000/service-auth/internal/trap"
-	"github.com/Alexander1000/service-auth/internal/database"
-	"github.com/Alexander1000/service-auth/internal/storage"
-	"github.com/Alexander1000/service-auth/internal/api/v1/registration"
 	"github.com/Alexander1000/service-auth/internal/api/v1/authenticate"
 	"github.com/Alexander1000/service-auth/internal/api/v1/authorize"
+	"github.com/Alexander1000/service-auth/internal/api/v1/logout"
+	"github.com/Alexander1000/service-auth/internal/api/v1/refresh"
+	"github.com/Alexander1000/service-auth/internal/api/v1/registration"
+	"github.com/Alexander1000/service-auth/internal/config"
+	"github.com/Alexander1000/service-auth/internal/database"
+	"github.com/Alexander1000/service-auth/internal/storage"
+	"github.com/Alexander1000/service-auth/internal/trap"
 )
 
 func main() {

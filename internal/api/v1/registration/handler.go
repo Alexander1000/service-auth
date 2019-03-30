@@ -1,12 +1,12 @@
 package registration
 
 import (
-	"net/http"
-	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
-	"io/ioutil"
 	"encoding/json"
 	"github.com/Alexander1000/service-auth/internal/model"
+	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
+	"io/ioutil"
 	"log"
+	"net/http"
 )
 
 type Handler struct {

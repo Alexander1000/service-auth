@@ -5,3 +5,6 @@ build:
 
 test:
 	GOPATH=$(shell pwd) go test -v $(GOPACKAGES)
+
+fmt:
+	go fmt ${GOPACKAGES}

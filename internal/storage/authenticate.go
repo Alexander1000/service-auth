@@ -2,13 +2,13 @@ package storage
 
 import (
 	"context"
-	"github.com/Alexander1000/service-auth/internal/model"
-	"fmt"
 	"database/sql"
+	"encoding/hex"
 	"errors"
+	"fmt"
+	"github.com/Alexander1000/service-auth/internal/model"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/blake2b"
-	"encoding/hex"
 )
 
 func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pass string) (*model.Token, error) {

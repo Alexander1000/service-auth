@@ -5,6 +5,6 @@ import (
 )
 
 type Config struct {
-	Port int `json:"port"`
+	Port     int               `json:"port"`
 	Database database.Settings `json:"database"`
 }

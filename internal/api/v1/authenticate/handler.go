@@ -1,11 +1,11 @@
 package authenticate
 
 import (
-	"net/http"
+	"encoding/json"
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 	"io/ioutil"
-	"encoding/json"
 	"log"
+	"net/http"
 )
 
 type Handler struct {

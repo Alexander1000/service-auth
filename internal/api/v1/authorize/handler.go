@@ -1,12 +1,12 @@
 package authorize
 
 import (
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
-	"log"
 	"github.com/Alexander1000/service-auth/internal/storage"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 type Handler struct {

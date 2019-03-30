@@ -1,11 +1,11 @@
 package trap
 
 import (
+	"context"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"context"
-	"log"
 )
 
 type Trap struct {
