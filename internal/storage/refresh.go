@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/Alexander1000/service-auth/internal/model"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
+
+	"github.com/Alexander1000/service-auth/internal/model"
 )
 
 func (r *Repository) Refresh(ctx context.Context, token string) (*model.Token, error) {

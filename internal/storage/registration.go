@@ -2,15 +2,15 @@ package storage
 
 import (
 	"context"
-
 	"database/sql"
 	"fmt"
-	"github.com/Alexander1000/service-auth/internal/model"
 	"strings"
 
 	"encoding/hex"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/blake2b"
+
+	"github.com/Alexander1000/service-auth/internal/model"
 )
 
 func (r *Repository) Registration(ctx context.Context, userID int64, pass string, credentials []model.Credential) error {

@@ -6,9 +6,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/Alexander1000/service-auth/internal/model"
+
 	"github.com/google/uuid"
 	"golang.org/x/crypto/blake2b"
+
+	"github.com/Alexander1000/service-auth/internal/model"
 )
 
 func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pass string) (*model.Token, error) {
