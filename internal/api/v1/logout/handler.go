@@ -36,6 +36,7 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	err := h.storage.Logout(req.Context(), reqData.Token)
 	if err != nil {
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
+		return
 	}
 
 	jsonResponse.Reply(resp, response{Result: resultSuccess{Success: true}}, http.StatusOK)
