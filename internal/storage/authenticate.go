@@ -73,7 +73,7 @@ func (r *Repository) Authenticate(ctx context.Context, cred model.Credential, pa
 	hash := blake2b.Sum512(append([]byte(pass), uuidData...))
 	if passHash.String != hex.EncodeToString(hash[0:]) {
 		tx.Rollback()
-		return nil, errors.New("authenticate error")
+		return nil, ErrorAuthenticate
 	}
 
 	var tokenID sql.NullInt64

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Alexander1000/service-auth/internal/storage"
 	jsonResponse "github.com/Alexander1000/service-auth/internal/response/json"
 )
 
@@ -38,6 +39,11 @@ func (h *Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	token, err := h.storage.Authenticate(req.Context(), reqData.Credential, reqData.Password)
 	if err != nil {
+		if err == storage.ErrorAuthenticate {
+			jsonResponse.Reply(resp, jsonResponse.ErrorForbidden, http.StatusForbidden)
+			return
+		}
+
 		log.Printf("storage err: %v", err)
 		jsonResponse.Reply(resp, jsonResponse.ErrorInternalServerError, http.StatusInternalServerError)
 		return
